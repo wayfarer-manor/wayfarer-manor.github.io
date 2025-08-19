@@ -1,0 +1,394 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library of QRbel</title>
+  <link rel="stylesheet" href="../../css/qr.css">
+</head>
+<body>
+
+  <div style="position:absolute; top:10px; right:10px; z-index: 999;">
+    <button class="back" onclick="back()">← Back</button>
+  <select id="game-selector"></select><br>
+  <label><input type="checkbox" id="filter-safe"> Hide Items that can cause softlocks.</label><br>
+  <label><input type="checkbox" id="filter-reliable"> Hide Version-Dependant Codes.</label>
+</div>
+
+  <div class="sidebar">
+    <h2>Items</h2>
+    <ul id="coin-list"></ul>
+  </div>
+  <div class="main" id="main-container">
+    <h2 id="coin-title">Select an item</h2>
+    <p>Notes: This generates QR codes <i>as</i> you scroll down. All my code is open source and can be found <a href="https://github.com/n123git/YWdata/">on my github</a>.</p>
+    <div id="qr-list"></div>
+    <div id="loading" class="loading">Loading...</div>
+  </div>
+
+
+  <!-- Libraries -->
+  <script src="data/crypto-js.min.js"></script>
+  <script src="data/checksum.js"></script>
+  <script src="data/jsQR.min.js"></script> <!-- jsQR -->
+  <script src="data/qrcode.min.js"></script> <!-- qrcode.js lib-->
+  <script src="data/qrcode2.min.js"></script> <!-- qrcode lib (DIFFERENT!) (unused? idr XD)-->
+  <script src="data/types.js"></script> <!-- tes32 -->
+  <script src="data/consumable.js"></script> <!-- tes32 -->
+  <script>
+
+    function back() {window.location.href = window.location.href.replace(/[^/]+\/[^/]+\/[^/]+\/[^/]+$/, "index.html")} // function because im too laxy to inline in the back onclick properly
+function getQRSize() {
+  const minSize = 100;
+  const maxSize = 200;
+  const base = Math.floor(window.innerWidth / 10);
+  return Math.max(minSize, Math.min(base, maxSize));
+}
+
+updateQRSize = function() {document.documentElement.style.setProperty('--qr-size', getQRSize() + 'px')} // basic function to update the CSS based on data grabbed from getQRSize which uses viewport data lol.
+
+updateQRSize(); // init update
+window.addEventListener('resize', updateQRSize); // update it constantly (I noticed and made this due to console sidebar XD)
+
+    
+        // Define valid types and variations
+    MANUAL_ENTRIES = { // kinda like an ID
+      "58E": "Random Color Coin", // manual input
+      "5AO": "Random Color Coin",
+      
+      // add other type codes here*/
+    };
+
+    window.games = {
+  "Yo-kai Watch 2": {
+    validTypes: {...autoTypes, ...MANUAL_ENTRIES},
+    coinList: [
+  { name: "Flower Excitement Coin", isSafe: true, isReliable: true },
+  { name: "Bird Excitement Coin", isSafe: true, isReliable: true },
+  { name: "Wind Excitement Coin", isSafe: true, isReliable: true },
+  { name: "Moon Excitement Coin", isSafe: true, isReliable: true },
+
+  { name: "Yo Mystery Coin", isSafe: true, isReliable: true },
+  { name: "Kai Mystery Coin", isSafe: true, isReliable: true },
+  { name: "Sum Mystery Coin", isSafe: true, isReliable: true },
+  { name: "Mon Mystery Coin", isSafe: true, isReliable: true },
+
+  { name: "Five-Star Coin", isSafe: true, isReliable: true },
+  { name: "Cheerful Coin", isSafe: true, isReliable: true },
+
+  { name: "Traveler's Coin North", isSafe: true, isReliable: true },
+  { name: "Traveler's Coin Northeast", isSafe: true, isReliable: true },
+  { name: "Traveler's Coin East", isSafe: true, isReliable: true },
+  { name: "Traveler's Coin Central", isSafe: true, isReliable: true },
+  { name: "Traveler's Coin West", isSafe: true, isReliable: true },
+  { name: "Traveler's Coin Mountain", isSafe: true, isReliable: true },
+  { name: "Traveler's Coin South", isSafe: true, isReliable: true },
+  { name: "Traveler's Coin Midwest", isSafe: true, isReliable: true },
+  { name: "Traveler's Coin Island", isSafe: true, isReliable: true },
+
+  { name: "Carved Bear", isSafe: true, isReliable: true },
+  { name: "Goldfish Lantern", isSafe: true, isReliable: true },
+  { name: "Master's Lantern", isSafe: true, isReliable: true },
+  { name: "Gold Emblem", isSafe: true, isReliable: true },
+  { name: "Takoyaki Tray", isSafe: true, isReliable: true },
+  { name: "Dune Sand", isSafe: true, isReliable: true },
+  { name: "Vintage Parasol", isSafe: true, isReliable: true },
+  { name: "Terracotta Figure", isSafe: true, isReliable: true },
+  { name: "Red Hibiscus", isSafe: true, isReliable: true },
+
+  { name: "Red Coin", isSafe: true, isReliable: true },
+  { name: "Orange Coin", isSafe: true, isReliable: true },
+  { name: "Yellow Coin", isSafe: true, isReliable: true },
+  { name: "Green Coin", isSafe: true, isReliable: true },
+  { name: "Light-Blue Coin", isSafe: true, isReliable: true },
+  { name: "Blue Coin", isSafe: true, isReliable: true },
+  { name: "Pink Coin", isSafe: true, isReliable: true },
+  { name: "Purple Coin", isSafe: true, isReliable: true },
+  { name: "Random Color Coin", isSafe: true, isReliable: true },
+
+  { name: "Victory Scroll", isSafe: true, isReliable: true },
+  { name: "Nyext Scroll", isSafe: true, isReliable: true },
+  { name: "Nyaight Scroll", isSafe: true, isReliable: true },
+
+  { name: "Wonderer's Bell", isSafe: true, isReliable: true },
+  { name: "Boo Bundle", isSafe: true, isReliable: true },
+  { name: "Jet Bell", isSafe: true, isReliable: true },
+  { name: "Keepsake Cap", isSafe: true, isReliable: true },
+  { name: "Komasan Cog", isSafe: true, isReliable: true },
+  { name: "Hungramps Cog", isSafe: true, isReliable: true },
+  { name: "Draggie Cog", isSafe: true, isReliable: true },
+  { name: "Noko Cog", isSafe: true, isReliable: true },
+  { name: "Manjimutt Cog", isSafe: true, isReliable: true },
+  { name: "Walkappa Cog", isSafe: true, isReliable: true }
+]
+
+  },
+    "Also Yo-kai Watch 2": {
+    validTypes: {...(Object.fromEntries(Object.entries(autoTypes).slice(1))), ...MANUAL_ENTRIES},
+    coinList: [
+  { name: "Flower Excitement Coin", isSafe: true, isReliable: true },
+  { name: "Bird Excitement Coin", isSafe: true, isReliable: true },
+  { name: "Wind Excitement Coin", isSafe: true, isReliable: true },
+  { name: "Moon Excitement Coin", isSafe: true, isReliable: true },
+
+  { name: "Yo Mystery Coin", isSafe: true, isReliable: true },
+  { name: "Kai Mystery Coin", isSafe: true, isReliable: true },
+  { name: "Sum Mystery Coin", isSafe: true, isReliable: true },
+  { name: "Mon Mystery Coin", isSafe: true, isReliable: true },
+
+  { name: "Five-Star Coin", isSafe: true, isReliable: true },
+  { name: "Cheerful Coin", isSafe: true, isReliable: true },
+
+  { name: "Traveler's Coin North", isSafe: true, isReliable: true },
+  { name: "Traveler's Coin Northeast", isSafe: true, isReliable: true },
+  { name: "Traveler's Coin East", isSafe: true, isReliable: true },
+  { name: "Traveler's Coin Central", isSafe: true, isReliable: true },
+  { name: "Traveler's Coin West", isSafe: true, isReliable: true },
+  { name: "Traveler's Coin Mountain", isSafe: true, isReliable: true },
+  { name: "Traveler's Coin South", isSafe: true, isReliable: true },
+  { name: "Traveler's Coin Midwest", isSafe: true, isReliable: true },
+  { name: "Traveler's Coin Island", isSafe: true, isReliable: true },
+
+  { name: "Carved Bear", isSafe: true, isReliable: true },
+  { name: "Goldfish Lantern", isSafe: true, isReliable: true },
+  { name: "Master's Lantern", isSafe: true, isReliable: true },
+  { name: "Gold Emblem", isSafe: true, isReliable: true },
+  { name: "Takoyaki Tray", isSafe: true, isReliable: true },
+  { name: "Dune Sand", isSafe: true, isReliable: true },
+  { name: "Vintage Parasol", isSafe: true, isReliable: true },
+  { name: "Terracotta Figure", isSafe: true, isReliable: true },
+  { name: "Red Hibiscus", isSafe: true, isReliable: true },
+
+  { name: "Red Coin", isSafe: false, isReliable: true },
+  { name: "Orange Coin", isSafe: true, isReliable: false },
+  { name: "Yellow Coin", isSafe: false, isReliable: false },
+  { name: "Green Coin", isSafe: true, isReliable: true },
+  { name: "Light-Blue Coin", isSafe: true, isReliable: true },
+  { name: "Blue Coin", isSafe: true, isReliable: true },
+  { name: "Pink Coin", isSafe: true, isReliable: true },
+  { name: "Purple Coin", isSafe: true, isReliable: true },
+  { name: "Random Color Coin", isSafe: true, isReliable: true },
+
+  { name: "Victory Scroll", isSafe: true, isReliable: true },
+  { name: "Nyext Scroll", isSafe: true, isReliable: true },
+  { name: "Nyaight Scroll", isSafe: true, isReliable: true },
+
+  { name: "Wonderer's Bell", isSafe: true, isReliable: true },
+  { name: "Boo Bundle", isSafe: true, isReliable: true },
+  { name: "Jet Bell", isSafe: true, isReliable: true },
+  { name: "Keepsake Cap", isSafe: true, isReliable: true },
+  { name: "Komasan Cog", isSafe: true, isReliable: true },
+  { name: "Hungramps Cog", isSafe: true, isReliable: true },
+  { name: "Draggie Cog", isSafe: true, isReliable: true },
+  { name: "Noko Cog", isSafe: true, isReliable: true },
+  { name: "Manjimutt Cog", isSafe: true, isReliable: true },
+  { name: "Walkappa Cog", isSafe: true, isReliable: true }
+]
+
+  }
+};
+
+
+
+
+     window.exceptions = {"58E": "Random Color Coin", // manual input lol
+      "5AO": "Random Color Coin"}
+
+for (const game in window.games) {
+  const gameData = window.games[game];
+  for (const key in gameData.validTypes) {
+    if (gameData.validTypes.hasOwnProperty(key)) {
+      let value = gameData.validTypes[key];
+      value = grabConsumeName(value); 
+      gameData.validTypes[key] = value; 
+    }
+  }
+}
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const coinListEl = document.getElementById('coin-list');
+    const coinTitleEl = document.getElementById('coin-title');
+    const qrListEl = document.getElementById('qr-list');
+    const loadingEl = document.getElementById('loading');
+    const mainContainer = document.getElementById('main-container');
+    window.manual = false; // manually specify tabs via coinList
+    let typeList = [];
+    let currentCoin = null;
+    let loadIndex = 0;
+    let isLoading = false;
+
+function buildCoinList() {
+  coinListEl.innerHTML = '';
+  const seenCoins = new Set();
+
+  const hideUnsafe = document.getElementById('filter-safe').checked;
+  const hideUnreliable = document.getElementById('filter-reliable').checked;
+  const gameData = window.games[currentGame];
+
+  const addCoinToList = (coinName) => {
+    if (seenCoins.has(coinName)) return;
+    seenCoins.add(coinName);
+
+    const li = document.createElement('li');
+    li.textContent = coinName;
+    if (coinName === currentCoin) li.classList.add('active-coin');
+    li.addEventListener('click', () => {
+       selectCoin(coinName);
+
+      // update highlight
+      document.querySelectorAll('#coin-list li').forEach(el => el.classList.remove('active-coin'));
+      li.classList.add('active-coin');
+    });
+
+    li.innerHTML += `<div style="margin-bottom: 15px;"></div>`; // weird spacing trick that I wont remove
+    coinListEl.appendChild(li);
+  };
+
+  // Manual mode → use gameData.coinList (array of objects with flags)
+  if (window.manual) {
+    gameData.coinList.forEach(coin => {
+      if ((hideUnsafe && !coin.isSafe) || (hideUnreliable && !coin.isReliable)) return;
+      addCoinToList(coin.name);
+    });
+
+  } else {
+    // Auto mode → detect from validTypes
+    Object.values(gameData.validTypes).forEach(coinName => {
+      const coinObj = gameData.coinList.find(c => c.name === coinName);
+      if ((hideUnsafe && coinObj && !coinObj.isSafe) ||
+          (hideUnreliable && coinObj && !coinObj.isReliable)) return;
+      addCoinToList(coinName);
+    });
+
+    // Handle exceptions
+    Object.values(window.exceptions).forEach(coinName => addCoinToList(coinName));
+  }
+
+  // After list is built, check if current coin is still valid
+  if (currentCoin && !seenCoins.has(currentCoin)) {
+    currentCoin = null;
+    qrListEl.innerHTML = '';
+    coinTitleEl.textContent = "Select a coin";
+    loadIndex = 0;
+    usedCombos.clear();
+  }
+}
+
+
+
+// Rebuild when filters or game change
+document.getElementById('filter-safe').addEventListener('change', buildCoinList);
+document.getElementById('filter-reliable').addEventListener('change', buildCoinList);
+
+const selector = document.getElementById('game-selector');
+selector.addEventListener('change', e => {
+  currentGame = e.target.value;
+  buildCoinList();
+
+  const gameData = window.games[currentGame];
+
+  // Check if the old coin exists in the new game's list
+  if (currentCoin && gameData.coinList.some(c => c.name === currentCoin)) {
+    selectCoin(currentCoin); // refresh QRs for same coin
+  } else {
+    // Reset if coin not found
+    currentCoin = null;
+    qrListEl.innerHTML = '';
+    coinTitleEl.textContent = "Select a coin";
+    loadIndex = 0;
+    usedCombos.clear();
+  }
+});
+
+
+Object.keys(window.games).forEach(gameName => {
+  const opt = document.createElement('option');
+  opt.value = gameName;
+  opt.textContent = gameName;
+  selector.appendChild(opt);
+});
+
+// Default game
+let currentGame = selector.value || Object.keys(window.games)[0];
+selector.value = currentGame;
+buildCoinList();
+
+
+
+    // Scroll listener for infinite load
+    mainContainer.addEventListener('scroll', () => {
+      if (!currentCoin || isLoading) return;
+      if (mainContainer.scrollTop + mainContainer.clientHeight >= mainContainer.scrollHeight - 100) {
+        loadMore();
+      }
+    });
+
+let usedCombos = new Set(); // Track seen combos
+
+function selectCoin(coin) {
+  currentCoin = coin;
+  const gameData = window.games[currentGame];
+  typeList = Object.keys(gameData.validTypes).filter(k => gameData.validTypes[k] === coin);
+  coinTitleEl.textContent = coin;
+  qrListEl.innerHTML = '';
+  loadIndex = 0;
+  usedCombos.clear();
+  loadMore();
+}
+
+
+function calculateBatchSize() {
+  const itemSize = getQRSize() + 20; // QR size + gap
+  const cols = Math.floor(mainContainer.clientWidth / itemSize) || 1;
+  const rows = Math.floor(mainContainer.clientHeight / itemSize) || 1;
+  return cols * rows;
+}
+
+function loadMore() {
+  if (!currentCoin) return;
+  isLoading = true;
+  loadingEl.style.display = 'block';
+
+  const batchSize = calculateBatchSize();
+  let loaded = 0;
+
+  const maxCombos = 36 ** 4; // 36^4 = 1,679,616 possible combos
+
+  while (loaded < batchSize && loadIndex < typeList.length * maxCombos) {
+    const tIdx = Math.floor(loadIndex / maxCombos) % typeList.length;
+    const n = loadIndex % maxCombos;
+    loadIndex++;
+
+    const typeCode = typeList[tIdx];
+    const variation = n.toString(36).toUpperCase().padStart(4, '0');
+    const base = typeCode + variation;
+
+    if (usedCombos.has(base)) continue;
+    usedCombos.add(base);
+
+    let dataStr = generateQR(base);
+    if (dataStr.startsWith('/')) dataStr = dataStr.slice(1);
+    const url = 'n123git.iscool/' + dataStr; // still works - the game ignores everything before the last slash which is needed - everything else is stripped at parsing by the game.
+
+    const item = document.createElement('div');
+    item.className = 'qr-item';
+
+    QRCode.toString(url, { type: 'svg', errorCorrectionLevel: 'H',  margin: 1 }, (err, svg) => {
+      if (err) console.error(err);
+      item.innerHTML = svg;
+    });
+
+    qrListEl.appendChild(item);
+    loaded++;
+  }
+
+  isLoading = false;
+  loadingEl.style.display = 'none';
+}
+
+
+  });
+  </script>
+</body>
+</html>

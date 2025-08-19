@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wayfarer Manor</title>
+  <link rel="stylesheet" href="data/css/styles.css">
+</head>
+<body>
+<img src="data/ui/logo.svg" style="position: absolute; top: 0; left: 0; width: 20vw; height: auto; max-width: 600px; margin-left: -5vw;"></img>
+  <h1>Wayfarer Manor</h1>
+  <div id="home" class="options">
+    <a class="option" href="data/pages/qr/qrbel.html">QR Codes</a>
+    <div class="option" data-page="news">News</div>
+    <div class="option" data-page="tips">Tips</div>
+    <div class="option" data-page="cheats">Cheats</div>
+  </div>
+
+  <div id="news" class="page">
+    <h2>News</h2>
+    <div class="news-container" id="news-list"></div>
+    <div class="filter-buttons" id="news-filters"></div>
+    <div class="back" data-back>← Back</div>
+  </div>
+
+  <div id="tips" class="page">
+    <h2>Tips</h2>
+    <div class="filters">
+      <label>Game: <select id="filter-tips-game"><option value="">All</option></select></label>
+    </div>
+    <table>
+      <thead>
+        <tr><th>Game</th><th>Tip</th></tr>
+      </thead>
+      <tbody id="tips-list"></tbody>
+    </table>
+    <div class="back" data-back>← Back</div>
+  </div>
+
+  <div id="cheats" class="page">
+    <h2>Cheats</h2>
+    <div class="filters">
+      <label>Game: <select id="filter-game"><option value="">All</option></select></label>
+      <label>Region: <select id="filter-region"><option value="">All</option></select></label>
+    </div>
+    <table>
+      <thead>
+        <tr><th>Game</th><th>Region</th><th>Title</th><th>Action</th></tr>
+      </thead>
+      <tbody id="cheats-list"></tbody>
+    </table>
+    <div class="back" data-back>← Back</div>
+  </div>
+
+  <script src="data/news.js"></script>
+  <script src="data/tips.js"></script>
+  <script src="data/cheats.js"></script>
+  <script>
+    const home = document.getElementById('home');
+    const pages = document.querySelectorAll('.page');
+
+    const iconScale = 2.3;
+
+    document.querySelectorAll('.option[data-page]').forEach(opt => {
+      opt.addEventListener('click', () => {
+        const target = document.getElementById(opt.dataset.page);
+        home.style.display = 'none';
+        pages.forEach(p => p.classList.remove('active'));
+        target.classList.add('active');
+      });
+    });
+
+    document.querySelectorAll('[data-back]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        pages.forEach(p => p.classList.remove('active'));
+        home.style.display = 'grid';
+      });
+    });
+
+    function loadData() {
+      try {
+        const newsList = document.getElementById('news-list');
+        const newsFilters = document.getElementById('news-filters');
+        let activeTypes = new Set();
+
+        function renderNews() {
+          newsList.innerHTML = '';
+          const filtered = newsData.filter(item => !activeTypes.has(item.type));
+          filtered.sort((a,b) => new Date(b.Date) - new Date(a.Date));
+          filtered.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'news-item';
+            let iconHTML = '';
+            if (item.iconPath) {
+              const verticalPad = (typeof item.verticalPadding === 'number') ? `margin-top:${item.verticalPadding}px;` : '';
+              iconHTML = `<div class="news-icon" style="${verticalPad}"><img src="${item.iconPath}" alt="icon" style="width: calc(64px * ${iconScale}); height: auto;"><div class=\"news-type\">${item.type || ''}</div></div>`;
+            }
+            div.innerHTML = `
+              ${iconHTML}
+              <div class="news-content">
+                <div class="news-title">${item.Title}</div>
+                <div class="news-lower">
+                  <div class="news-game">${item.Game}</div>
+                  <div class="news-text">${item.News}</div>
+                  <div class="news-date">${item.Date}</div>
+                </div>
+              </div>
+            `;
+            newsList.appendChild(div);
+          });
+        }
+
+        const uniqueTypes = [...new Set(newsData.map(n => n.type).filter(Boolean))];
+        uniqueTypes.forEach(type => {
+          const btn = document.createElement('button');
+          btn.className = 'filter-btn active';
+          btn.textContent = type;
+          btn.addEventListener('click', () => {
+            if (activeTypes.has(type)) {
+              activeTypes.delete(type);
+              btn.classList.add('active');
+            } else {
+              activeTypes.add(type);
+              btn.classList.remove('active');
+            }
+            renderNews();
+          });
+          newsFilters.appendChild(btn);
+        });
+
+        renderNews();
+
+        const tipsList = document.getElementById('tips-list');
+        const tipsFilterGame = document.getElementById('filter-tips-game');
+
+        function renderTips() {
+          tipsList.innerHTML = '';
+          const filtered = tipsData.filter(item => !tipsFilterGame.value || item.Game === tipsFilterGame.value);
+          filtered.sort((a,b) => a.Game.localeCompare(b.Game));
+          filtered.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${item.Game}</td><td>${item.Tip}</td>`;
+            tipsList.appendChild(row);
+          });
+        }
+
+        const uniqueTipGames = [...new Set(tipsData.map(t => t.Game))];
+        uniqueTipGames.forEach(g => {
+          const opt = document.createElement('option');
+          opt.value = g;
+          opt.textContent = g;
+          tipsFilterGame.appendChild(opt);
+        });
+        tipsFilterGame.addEventListener('change', renderTips);
+        renderTips();
+
+        const cheatsList = document.getElementById('cheats-list');
+        const gameFilter = document.getElementById('filter-game');
+        const regionFilter = document.getElementById('filter-region');
+
+        function renderCheats() {
+          cheatsList.innerHTML = '';
+          const filtered = cheatsData.filter(item => {
+            return (!gameFilter.value || item.Game === gameFilter.value) &&
+                   (!regionFilter.value || item.Region === regionFilter.value);
+          });
+          filtered.sort((a,b) => {
+            if (a.Game === b.Game) return a.Region.localeCompare(b.Region);
+            return a.Game.localeCompare(b.Game);
+          });
+          filtered.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${item.Game}</td>
+              <td>${item.Region}</td>
+              <td>${item.Title}</td>
+              <td><button class="copy-btn" onclick="navigator.clipboard.writeText(\`${item.Code}\`).then(() => alert('Copied to clipboard.'))">Copy</button></td>
+            `;
+            cheatsList.appendChild(row);
+          });
+        }
+
+        const uniqueGames = [...new Set(cheatsData.map(c => c.Game))];
+        uniqueGames.forEach(g => {
+          const opt = document.createElement('option');
+          opt.value = g;
+          opt.textContent = g;
+          gameFilter.appendChild(opt);
+        });
+        const uniqueRegions = [...new Set(cheatsData.map(c => c.Region))];
+        uniqueRegions.forEach(r => {
+          const opt = document.createElement('option');
+          opt.value = r;
+          opt.textContent = r;
+          regionFilter.appendChild(opt);
+        });
+
+        gameFilter.addEventListener('change', renderCheats);
+        regionFilter.addEventListener('change', renderCheats);
+
+        renderCheats();
+      } catch (err) {
+        console.error('Failed to load data:', err);
+      }
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
