@@ -39,6 +39,7 @@
 
   <div id="cheats" class="page">
     <h2>Cheats</h2>
+     <h5>If you have any cheat suggestions, DM me on discord (@n123original)!. Most NA cheats work on AUS. And finally it is YOUR responsibility if you incorrectly use it leading to any freezes, crashes or other resulting products.</h5>
     <div class="filters">
       <label>Game: <select id="filter-game"><option value="">All</option></select></label>
       <label>Region: <select id="filter-region"><option value="">All</option></select></label>
@@ -174,7 +175,7 @@
               <td>${item.Game}</td>
               <td>${item.Region}</td>
               <td>${item.Title}</td>
-              <td><button class="copy-btn" onclick="navigator.clipboard.writeText(\`${item.Code}\`).then(() => alert('Copied to clipboard.'))">Copy</button></td>
+              <td><button class="copy-btn" onclick="copyCheck(this)">Copy</button></td>
             `;
             cheatsList.appendChild(row);
           });
@@ -207,5 +208,14 @@
 
     loadData();
   </script>
+  <script>
+  function copyCheck(btn) {
+  btn.textContent = "Copied";
+
+  setTimeout(() => {
+    btn.textContent = "Copy";
+  }, 2000);
+}
+</script>
 </body>
 </html>
