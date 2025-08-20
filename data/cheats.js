@@ -122,6 +122,30 @@ D2000000 00000000`
 D2000000 00000000`
     },
     {
+       "Game": "Yo-kai Watch 2: Psychic Specters",
+       "Region": "NA",
+       "Title": "CTRPF - Instant terror time (activates in areas where Terror Time can trigger)",
+       "Code": `D3000000 08000000
+006D0A30 00000001
+D2000000 00000000` 
+    },
+    {
+      "Game": "Yo-kai Watch 2: Psychic Specters",
+      "Region": "NA",
+      "Title": "CTRPF - Disable Terror Time (Will not stop a Terror Time event <strong>already happening</strong>).",
+      "Code": `D3000000 08000000
+006D0A30 00000080
+D2000000 00000000`
+    },
+    {
+       "Game": "Yo-kai Watch 2: Psychic Specters",
+       "Region": "NA",
+       "Title": "CTRPF - Max Oni Orbs Terror Time - collect one orb to activate",
+       "Code": `D3000000 08000000
+10A039E0 00007E00
+D2000000 00000000`
+    },
+    {
         "Game": "Yo-kai Watch 2: Psychic Specters", 
         "Region": "NA", 
         "Title": "CTRPF - Infinite Crank-a-kai Uses (Appears as 30/30).", 

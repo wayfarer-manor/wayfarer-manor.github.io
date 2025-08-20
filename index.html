@@ -170,15 +170,23 @@
             return a.Game.localeCompare(b.Game);
           });
           filtered.forEach(item => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-              <td>${item.Game}</td>
-              <td>${item.Region}</td>
-              <td>${item.Title}</td>
-              <td><button class="copy-btn" onclick="copyCheck(this)">Copy</button></td>
-            `;
-            cheatsList.appendChild(row);
-          });
+  const row = document.createElement('tr');
+  row.innerHTML = `
+    <td>${item.Game}</td>
+    <td>${item.Region}</td>
+    <td>${item.Title}</td>
+    <td>
+      <button class="copy-btn" data-code="${item.Code}">Copy</button>
+    </td>`;
+  cheatsList.appendChild(row);
+});
+
+// attach listeners
+cheatsList.querySelectorAll(".copy-btn").forEach(btn => {
+  btn.addEventListener("click", function () {
+    copyText(this.dataset.code, this);
+  });
+});
         }
 
         const uniqueGames = [...new Set(cheatsData.map(c => c.Game))];
@@ -209,11 +217,41 @@
     loadData();
   </script>
   <script>
+  function copyText(text, btn) {
+  navigator.clipboard.writeText(text)
+    .then(() => {
+      // Success -> show checkmark
+      copyCheck(btn);
+    })
+    .catch(err => {
+      // Failure -> complain about it
+      console.error("Clipboard write failed:", err);
+      btn.textContent = "Failed";
+      setTimeout(() => {
+        btn.textContent = "Copy";
+      }, 2000);
+    });
+}
+  </script>
+  <script>
   function copyCheck(btn) {
-  btn.textContent = "Copied";
+  // Save original content
+  const originalContent = btn.innerHTML;
 
+  // Replace with checkmark SVG (inline is better than <img> so we can style color/size)
+  btn.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" 
+         viewBox="0 0 24 24" 
+         fill="white" 
+         width="20" height="20"
+         style="display:block; margin:auto;">
+      <path d="M20.285 6.709a1 1 0 0 0-1.414-1.418l-9.192 9.193-4.243-4.243a1 1 0 1 0-1.414 1.414l5 5a1 1 0 0 0 1.414 0l10-10z"/>
+    </svg>
+  `;
+
+  // Restore after 2 seconds
   setTimeout(() => {
-    btn.textContent = "Copy";
+    btn.innerHTML = originalContent;
   }, 2000);
 }
 </script>
