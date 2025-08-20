@@ -2,7 +2,7 @@ var cheatsData = [
     {
         "Game": "Yo-kai Watch 2: Psychic Specters", 
         "Region": "EUR", 
-        "Title": "CTRPF - remove item cooldown in battles TODO: ADD THIS LATER.", 
+        "Title": "CTRPF - remove item cooldown in battles", 
         "Code": `D3000000 08000000
 207BC2C9 00000000
 D2000000 00000000`
@@ -81,12 +81,12 @@ D2000000 00000000`
         "Region": "EUR", 
         "Title": "CTRPF - Ally Yo-kai Immortality.", 
         "Code": `D3000000 08000000
-107B653C 00007FFF
-107B6A24 00007FFF
-107B6F0C 00007FFF
-107B73FC 00007FFF
-107B78DC 00007FFF
-107B7DC4 00007FFF
+107B653C 00007000
+107B6A24 00007000
+107B6F0C 00007000
+107B73FC 00007000
+107B78DC 00007000
+107B7DC4 00007000
 D2000000 00000000`
     },
     {
