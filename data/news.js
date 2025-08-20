@@ -22,6 +22,6 @@ var newsData = [
      "Title":'Y School Heroes French patch has now released.',
      "iconPath": "data/icons/ysh.png",
      "type":"Mods/Translations",
-     "News": 'While it remains a very early build. It still translates a few menus, a few names, and Chapter1 entirely! It can be found <a class=hyperlink href="https://gamebanana.com/mods/610368">here</a>.'
+     "News": 'While it remains a very early build. It still translates a few menus, a few names, and Chapter 1 entirely! It can be found <a class=hyperlink href="https://gamebanana.com/mods/610368">here</a>.'
      }
 ]
