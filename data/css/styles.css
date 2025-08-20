@@ -184,6 +184,7 @@
       border-radius: 6px;
       cursor: pointer;
       transition: background 0.3s ease;
+      font-family: FOT-Seurat Pro B
     }
     .copy-btn:hover {
       background-color: #218838;
@@ -204,6 +205,9 @@
     }
     a.option:visited {
      color: inherit;        /* prevents purple visited links */
+    }
+    .hyperlink {
+     color: cyan;
     }
 
 a.option:hover {
