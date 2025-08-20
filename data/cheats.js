@@ -147,6 +147,19 @@ D2000000 00000000`
 D2000000 00000000`
     },
     {
+        "Game": "Yo-kai Watch 2: Psychic Specters",
+        "Region": "NA",
+        "Title": "CTRPF - Oneshot enemies.",
+        "Code": `D3000000 08000000
+107CFE44 00000001
+107CF95C 00000001
+107D032C 00000001
+107D0814 00000001
+107D0CFC 00000001
+107D11E4 00000001
+D2000000 00000000`
+    },
+    {
         "Game": "Yo-kai Watch 2: Psychic Specters", 
         "Region": "NA", 
         "Title": "CTRPF - Ally Yo-kai Immortality.", 
