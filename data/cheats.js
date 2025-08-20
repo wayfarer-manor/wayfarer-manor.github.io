@@ -148,6 +148,19 @@ D2000000 00000000`
     },
     {
         "Game": "Yo-kai Watch 2: Psychic Specters", 
+        "Region": "NA", 
+        "Title": "CTRPF - Ally Yo-kai Immortality.", 
+        "Code": `D3000000 08000000
+107CDBEC 0000DFFF
+107BE0D4 0000DFFF
+107BE5BC 0000DFFF
+107BEAA4 0000DFFF
+107BEF8C 0000DFFF
+107BF474 0000DFFF
+D2000000 00000000`
+    },
+    {
+        "Game": "Yo-kai Watch 2: Psychic Specters", 
         "Region": "EUR", 
         "Title": "CTRPF - Infinite JP.", 
         "Code": `D3000000 08000000
