@@ -122,6 +122,14 @@ D2000000 00000000`
 D2000000 00000000`
     },
     {
+        "Game": "Yo-kai Watch 2: Psychic Specters",
+        "Region": "EUR",
+        "Title": "CTRPF - Hyper Sprint (sprint to activate)",
+        "Code": `D3000000 08000000
+00001EFC 40400000
+D2000000 00000000`
+    },
+    {
        "Game": "Yo-kai Watch 2: Psychic Specters",
        "Region": "NA",
        "Title": "CTRPF - Instant terror time (activates in areas where Terror Time can trigger)",
